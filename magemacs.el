@@ -20,9 +20,11 @@
           (if (file-exists-p (filepath-concat app-dir "Mage.php"))
               root-dir)))))
 
-(defun filepath-concat (dir file)
-  (concat (file-name-as-directory dir) file))
-
+(defun filepath-concat (&rest parts)
+  (let ((start (butlast parts))
+        (end (car (last parts))))
+    (expand-file-name (concat (mapconcat 'file-name-as-directory start "") end))))
+      
 (defun mage-get-app-dir ()
   (filepath-concat (mage-get-root) "app"))
 

@@ -75,6 +75,17 @@
             )
           (buffer-string))))))
 
+(defun mage-get-version ()
+  (interactive)
+  (message (mage-run-shell "version")))
+
+(defun mage-open-config ()
+  (interactive)
+  (find-file (filepath-concat (mage-get-root) "app" "etc" "local.xml"))
+  )
+
+
+
                           
 
 

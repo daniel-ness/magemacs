@@ -67,6 +67,7 @@
       (let ((output (current-buffer)))
         (progn
           (with-temp-buffer
+            (insert (format "require_once '%s/shell/abstract.php';" root-dir))
             (insert-file-contents (filepath-concat magemacs-dir "magemacs.php"))
             (call-process "php" nil output nil "-r" (buffer-string) arg)
             )

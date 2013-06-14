@@ -1,5 +1,3 @@
-require_once 'abstract.php';
-
 class Magemacs_Shell extends Mage_Shell_Abstract
 {
 

@@ -59,11 +59,9 @@
   (interactive)
   )
 
-(defun mage-get-version ()
-  (interactive)
-  (message (mage-run-shell "version")))
-
 (defun mage-run-shell (arg)
+  ;; Execute the php bridge script to get information
+  ;; directly from magento
   (let ((root-dir (mage-get-root)))
     (with-temp-buffer
       (let ((output (current-buffer)))

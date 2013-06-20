@@ -38,7 +38,7 @@ class Magemacs_Shell extends Mage_Shell_Abstract
     protected function _getModelClassName($model)
     {
         if(!$instance = Mage::getModel($model)) {
-            print("'$class' is not a valid entity");
+            print("'$model' is not a valid entity");
             exit(1);
         }
 

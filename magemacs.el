@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t -*-
+
 ;;
 ;; -- Magemacs --
 ;; @author Daniel Ness <daniel.r.ness@gmail.com>
@@ -13,12 +15,14 @@
   ;; Get root magento installation directory that is parent of file
   ;; by attempting to identify {root}/app/Mage.php
   (let* ((dir (file-name-directory (buffer-file-name)))
-         (root-dir (expand-file-name (locate-dominating-file dir "app"))))
-    (if (stringp root-dir)
-        (let* ((dir (expand-file-name root-dir))
-               (app-dir (concat (file-name-as-directory dir) (file-name-as-directory "app"))))
-          (if (file-exists-p (filepath-concat app-dir "Mage.php"))
-              root-dir)))))
+         (root-dir (locate-dominating-file dir "app")))
+    (if (not root-dir)
+        ;; TODO prompt for custom location
+        (error "No magento directory found"))
+    (let* ((dir (expand-file-name root-dir))
+           (app-dir (concat (file-name-as-directory dir) (file-name-as-directory "app"))))
+      (if (file-exists-p (filepath-concat app-dir "Mage.php"))
+          root-dir))))
 
 (defun filepath-concat (&rest parts)
   (let ((start (butlast parts))
@@ -39,19 +43,37 @@
 
 (defun mage-new-module ()
   (interactive)
-  (read-from-minibuffer "Codepool (local/community): ")
-  (read-from-minibuffer "Namespace_ModuleName: ")
+  (let ((root-dir (mage-get-root))
+        (codepool nil)
+        (namespace nil)
+        (modulename nil)
+        (module-path nil))
+    (loop do
+          (setq codepool (read-from-minibuffer "Codepool (local/community): "))
+          while (not (or (string= "local" codepool) (string= "community" codepool))))
+    (loop do
+          (setq namespace (read-from-minibuffer "Namespace: "))
+          while (not (string-match "^[A-Z][A-Za-z0-9]*$" namespace)))
+    (loop do
+          (setq modulename (read-from-minibuffer "Module Name: "))
+          while (not (string-match "^[A-Z][A-Za-z0-9]*$" modulename)))
+    (setq module-path (filepath-concat root-dir "app" "code" codepool namespace modulename))
+
+    (if (file-exists-p module-path)
+        (error (format "'%s' already exists" module-path)))
+
+    (make-directory module-path)
+    (make-directory (filepath-concat module-path "etc" ))
+    (make-directory (filepath-concat module-path "Helper"))
+
   )
+)
 
 (defun mage-describe-model ()
   (interactive)
   )
 
 (defun mage-summary ()
-  (interactive)
-  )
-
-(defun mage-version ()
   (interactive)
   )
 

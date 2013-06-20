@@ -43,15 +43,7 @@
   (read-from-minibuffer "Namespace_ModuleName: ")
   )
 
-(defun mage-describe-model ()
-  (interactive)
-  )
-
 (defun mage-summary ()
-  (interactive)
-  )
-
-(defun mage-version ()
   (interactive)
   )
 
@@ -59,7 +51,7 @@
   (interactive)
   )
 
-(defun mage-run-shell (arg)
+(defun mage-run-shell (&rest args)
   ;; Execute the php bridge script to get information
   ;; directly from magento
   (let ((root-dir (mage-get-root)))
@@ -69,18 +61,23 @@
           (with-temp-buffer
             (insert (format "require_once '%s/shell/abstract.php';" root-dir))
             (insert-file-contents (filepath-concat magemacs-dir "magemacs.php"))
-            (call-process "php" nil output nil "-r" (buffer-string) arg)
-            )
+            (apply 'call-process "php" nil output nil "-r" (buffer-string) "--" args))
           (buffer-string))))))
 
 (defun mage-get-version ()
   (interactive)
   (message (mage-run-shell "version")))
 
+(defun mage-describe-model ()
+  (interactive)
+  (let ((model ""))
+    (while (not (string-match "^[a-z]+/\\([a-z]+_?\\)*[a-z]+$" model))
+      (setq model (read-from-minibuffer "Entity name: ")))
+    (message (mage-run-shell "-model" model))))
+
 (defun mage-open-config ()
   (interactive)
-  (find-file (filepath-concat (mage-get-root) "app" "etc" "local.xml"))
-  )
+  (find-file (filepath-concat (mage-get-root) "app" "etc" "local.xml")))
 
 
 

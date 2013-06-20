@@ -35,13 +35,25 @@ class Magemacs_Shell extends Mage_Shell_Abstract
         return "$edition " . Mage::getVersion();
     }
 
+    protected function _getModelClassName($model)
+    {
+        if(!$instance = Mage::getModel($model)) {
+            print("'$class' is not a valid entity");
+            exit(1);
+        }
+
+        return get_class($instance);
+    }
+
     public function run()
     {
         if(isset($this->_args['version'])) {
             echo $this->_checkVersion();
+        } elseif(isset($this->_args['model'])) {
+            echo $this->_getModelClassName($this->_args['model']);
         }
     }
-    
+
 }
 
 $x = new Magemacs_Shell;
